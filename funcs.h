@@ -72,7 +72,7 @@ int readData(struct Customer customers[], int *count) {
     *count = 0;
     int fscworked = 6;
     while (fscworked == 6 && *count < MAX_CUSTOMERS) {
-        fscworked = fscanf(file, "%s %d %f %s %s %s", customers[*count].name, &customers[*count].accountNumber, &customers[*count].balance, customers[*count].contactNumber, customers[*count].serviceRegion, &customers[*count].pin);
+        fscworked = fscanf(file, "%s %d %f %s %s %s", customers[*count].name, &customers[*count].accountNumber, &customers[*count].balance, customers[*count].contactNumber, customers[*count].serviceRegion, customers[*count].pin);
         if (fscworked != 6)
         {
             break;
