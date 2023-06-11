@@ -97,9 +97,8 @@ int main()
                             }
                         }
                         customers[count].accountNumber = maxACno + 1;
+                        printf("\tCustomer added successfully.\t\n\n\tAccount Number: %d\n", customers[count].accountNumber);
                         count++;
-
-                        printf("\tCustomer added successfully.\t\n");
                     }
                     getch(); // used getch() to hold the screen content before refreshing
                     break;
