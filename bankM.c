@@ -17,13 +17,15 @@ int main()
         if (option == 2)
         {
             printf("\n");
-            readStat = readData(customers, &count);  //password check
+            readStat = readData(customers, &count);  // password check & reading all data from file
             if (readStat == 1)
             {
                 int writeStat = writeData(customers, count);
             }
             while (1)
             {
+                clr();
+                pheader();
                 printf("\n");
                 printf("\n\t****************Bank Management System Menu:****************\t\n");
                 printf("\t\t1. Add Customer\n");
@@ -43,55 +45,80 @@ int main()
                 {
                 case 1:
                     clr();
+                    pheader();
                     if (count >= MAX_CUSTOMERS)
                     {
                         printf("\tMaximum number of customers reached.\t\n");
                     }
                     else
                     {
+                        fflush(stdin);
                         printf("\tEnter customer name: ");
-                        scanf("%s", customers[count].name);
+                        fgets(customers[count].name, 100, stdin);
+                        customers[count].name[strlen(customers[count].name) - 1] = '\0';
                         printf("\tEnter contact number: ");
+                        fflush(stdin);
                         scanf("%s", customers[count].contactNumber);
                         printf("\tEnter service region: ");
+                        fflush(stdin);
                         scanf("%s", customers[count].serviceRegion);
                         printf("\tEnter initial balance: ");
+                        fflush(stdin);
                         scanf("%f", &customers[count].balance);
-
+                        fflush(stdin);
                         printf("\tSet a PIN: ");
                         scanf("%s", customers[count].pin);
-
-                        customers[count].accountNumber = 1070000 + count + 1;
+                        fflush(stdin);
+                        int maxACno = 1070000, i;
+                        for (i = 0; i < count; i++)
+                        {
+                            if (customers[i].accountNumber > maxACno)
+                            {
+                                maxACno = customers[i].accountNumber;
+                            }
+                        }
+                        customers[count].accountNumber = maxACno + 1;
                         count++;
 
                         printf("\tCustomer added successfully.\t\n");
                     }
+                    getch();
                     break;
                 case 2:
                     clr();
+                    pheader();
                     printf("\tEnter account number: ");
                     int accountNumber;
                     scanf("%d", &accountNumber);
                     searchData(customers, count, accountNumber);
+                    getch();
                     break;
                 case 3:
                     clr();
+                    pheader();
                     printf("\tEnter account number: ");
                     scanf("%d", &accountNumber);
                     deleteData(customers, &count, accountNumber);
+                    getch();
                     break;
                 case 4:
                     clr();
+                    pheader();
                     printf("\tEnter account number: ");
                     scanf("%d", &accountNumber);
+                    fflush(stdin);
                     editData(customers, count, accountNumber);
+                    getch();
                     break;
                 case 5:
                     clr();
+                    pheader();
                     changePassword();
+                    getch();
                     break;
                 case 6:
                     clr();
+                    pheader();
                     printf("\tEnter sender account number: ");
                     int senderAccountNumber;
                     scanf("%d", &senderAccountNumber);
@@ -99,9 +126,11 @@ int main()
                     int receiverAccountNumber;
                     scanf("%d", &receiverAccountNumber);
                     transferMoney(customers, count, senderAccountNumber, receiverAccountNumber);
+                    getch();
                     break;
                 case 7:
                     clr();
+                    pheader();
                     printf("\tSort by:\t\n");
                     printf("\t1. Name\n");
                     printf("\t2. Deposit\n");
@@ -148,19 +177,25 @@ int main()
                         printf("\tInvalid choice.\t\n");
                         break;
                     }
+                    getch();
                     break;
                 case 8:
                     clr();
+                    pheader();
                     printAllAccounts(customers, count);
+                    getch();
                     break;
                 case 9:
                     clr();
+                    pheader();
                     addInterest(customers, count);
                     printAllAccounts(customers, count);
+                    getch();
                     break;
                 case 0:
                     clr();
-                    printf("\n\t**************Exiting the program**************\t\n");
+                    pheader();
+                    printf("\n\t*****************Exiting the program******************\t\n");
                     printf("\n");
                     writeData(customers, count);
                     printf("\n\t===========================================\t\n");
@@ -168,12 +203,15 @@ int main()
                     printf("\t=============================================\t\n");
                     return 0;
                     break;
-                } // end of switch case
-            } // end while
-        } // end of if
+                }
+            }
+        }
         else if (option == 1)
         {
-            printf("\n\t****************Banking Menu:****************\t\n");
+            clr();
+            pheader();
+            readDataUser(customers, &count);
+            printf("\n\n\t*******************Banking Menu:*******************\t\n");
             printf("Enter account number: ");
             int AccountNumber;
             scanf("%d", &AccountNumber);
@@ -192,6 +230,7 @@ int main()
             if (accIndex == -1)
             {
                 printf("Account number didn't match any existing accounts!!\n");
+                break;
             }
             printf("Enter your pin: ");
             char pin[5];
@@ -201,37 +240,90 @@ int main()
                 printf("Wrong pin!!\n");
                 break;
             }
-
-            printf("\n\t\t1. Check Balance\n");
-            printf("\t\t2. Transfer Money\n");
-            printf("\t\t3. Withdraw Money\n");
-            printf("\t\t4. Change your pin\n");
-            printf("\t\t0. Exit\n");
-            printf("\n\tEnter your choice: ");
-            int choice2;
-            scanf("%d", &choice2);
-            printf("\n");
-
-            switch (choice2)
+            while (1)
             {
-            case 1:
-                printf("Your Balance is $%d\n", customers[accIndex].balance);
-                break;
-            case 2:
                 clr();
-                printf("Enter receiver account number: ");
-                int receiverAccountNumber;
-                scanf("%d", &receiverAccountNumber);
-                transferMoney(customers, count, AccountNumber, receiverAccountNumber);
-                break;
-            case 0:
-                printf("\t*************Exiting the program*************\t\n");
-                break;
-            default:
-                printf("\n\tError!\t\n");
-                break;
-            } // end of switch case
-        } // end of else if
-    } // end of while
+                pheader();
+                printf("\n\t\t1. Check Balance\n");
+                printf("\t\t2. Transfer Money\n");
+                printf("\t\t3. Withdraw Money\n");
+                printf("\t\t4. Change your pin\n");
+                printf("\t\t0. Exit\n");
+                printf("\n\tEnter your choice: ");
+                int choice2;
+                scanf("%d", &choice2);
+                printf("\n");
+
+                switch (choice2)
+                {
+                case 1:
+                    clr();
+                    pheader();
+                    printf("Your Balance is $%.2f\n", customers[accIndex].balance);
+                    getch();
+                    break;
+                case 2:
+                    clr();
+                    pheader();
+                    printf("\n\tEnter receiver account number: ");
+                    int receiverAccountNumber;
+                    scanf("%d", &receiverAccountNumber);
+                    transferMoney(customers, count, AccountNumber, receiverAccountNumber);
+                    getch();
+                    break;
+                case 3:
+                    clr();
+                    pheader();
+                    float withdraw;
+                    printf("Enter amount to withdraw: ");
+                    scanf("%f", &withdraw);
+                    printf("Enter pin: ");
+                    scanf("%s", pin);
+                    if (strcmp(pin, customers[accIndex].pin) == 0)
+                    {
+                        customers[accIndex].balance -= withdraw;
+                        printf("Withdrawal Successful!\n\nYour new balance is: $%.2f\n\n", customers[accIndex].balance);
+                    }
+                    else
+                    {
+                        printf("Wrong pin!! Withdrawal denied!!!\n\n");
+                    }
+                    getch();
+                    break;
+                case 4:
+                    clr();
+                    pheader();
+                    printf("Enter current pin: ");
+                    scanf("%s", pin);
+                    if (strcmp(pin, customers[accIndex].pin) == 0)
+                    {
+                        printf("Enter new pin: ");
+                        scanf("%s", customers[accIndex].pin);
+                        printf("\n\nPin changed successfully!\n\n");
+                    }
+                    else
+                    {
+                        printf("Wrong pin!!\n\n");
+                    }
+                    getch();
+                    break;
+                case 0:
+                    clr();
+                    pheader();
+                    printf("\n\t========================Exiting the program========================\t\n");
+                    printf("\n");
+                    writeData(customers, count);
+                    printf("\t=============================================================\t\n");
+                    printf("\t         Thank you for your time and have a good day!\n");
+                    printf("\t=============================================================\t\n");
+                    return 0;
+                    break;
+                default:
+                    printf("\n\tError!\t\n");
+                    break;
+                }
+            }
+        }
+    }
     return 0;
 }
