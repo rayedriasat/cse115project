@@ -1,8 +1,20 @@
+#ifdef _WIN32
+#define clr() system("cls")
+#else
+#define clr() system("clear")
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define MAX_CUSTOMERS 100
+
+void pheader(){
+    printf("\t=============================================================\t\n");
+    printf("\t         Welcome to Bank of North South University\n");
+    printf("\t=============================================================\t\n");
+}
 
 struct Customer {
     char name[100];
@@ -10,7 +22,7 @@ struct Customer {
     float balance;
     char contactNumber[20];
     char serviceRegion[10];
-    char pin[3];
+    char pin[5];
 };
 
 
@@ -29,20 +41,20 @@ void decrypt(char *str, int key) {
 int writeData(struct Customer customers[], int count) {
     FILE *file = fopen("bankdata.txt", "w");
     if (file == NULL) {
-        printf("Error opening file.\n");
+        printf("\tError opening file.\t\n");
         return 1;
     }
 
     for (int i = 0; i < count; i++) {
         encrypt(customers[i].name, 5);
         encrypt(customers[i].pin, 7);
-        fprintf(file, "%s %d %.2f %s %s %s\n", customers[i].name, customers[i].accountNumber, customers[i].balance, customers[i].contactNumber, customers[i].serviceRegion, customers[i].pin);
+        fprintf(file, "%s %d %.2f %s %s %s\n", customers[i].name, customers[i].accountNumber, customers[i].balance, customers[i].contactNumber,customers[i].serviceRegion, customers[i].pin);
         decrypt(customers[i].name, 5);
         decrypt(customers[i].pin, 7);
     }
 
     fclose(file);
-    printf("Data written to file successfully.\n");
+    printf("\t=======Data written to file successfully.=======\n\n");
     return 0;
 }
 
@@ -98,7 +110,7 @@ void sortDataAlphabetically(struct Customer customers[], int count) {
             }
         }
     }
-    printf("Data sorted alphabetically successfully.\n");
+    printf("\tData sorted alphabetically successfully.\t\n");
 }
 
 void sortDataByDeposit(struct Customer customers[], int count) {
@@ -111,7 +123,7 @@ void sortDataByDeposit(struct Customer customers[], int count) {
             }
         }
     }
-    printf("Data sorted by deposit successfully.\n");
+    printf("\tData sorted by deposit successfully.\t\n");
 }
 
 void sortDataByAccountNumber(struct Customer customers[], int count) {
@@ -124,25 +136,25 @@ void sortDataByAccountNumber(struct Customer customers[], int count) {
             }
         }
     }
-    printf("Data sorted by account number successfully.\n");
+    printf("\tData sorted by account number successfully.\t\n");
 }
 
 void searchData(struct Customer customers[], int count, int accountNumber) {
     int found = 0;
     for (int i = 0; i < count; i++) {
         if (customers[i].accountNumber == accountNumber) {
-            printf("Customer found:\n");
-            printf("Name: %s\n", customers[i].name);
-            printf("Account Number: %d\n", customers[i].accountNumber);
-            printf("Balance: %.2f\n", customers[i].balance);
-            printf("Contact Number: %s\n", customers[i].contactNumber);
-            printf("Service Region: %s\n", customers[i].serviceRegion);
+            printf("\tCustomer found:\t\n");
+            printf("\tName: %s\t\n", customers[i].name);
+            printf("\tAccount Number: %d\t\n", customers[i].accountNumber);
+            printf("\tBalance: %.2f\t\n", customers[i].balance);
+            printf("\tContact Number: %s\t\n", customers[i].contactNumber);
+            printf("\tService Region: %s\t\n", customers[i].serviceRegion);
             found = 1;
             break;
         }
     }
     if (!found) {
-        printf("Customer with account number %d not found.\n", accountNumber);
+        printf("\tCustomer with account number %d not found.\t\n", accountNumber);
     }
 }
 
@@ -155,12 +167,12 @@ void deleteData(struct Customer customers[], int *count, int accountNumber) {
                 customers[j] = customers[j + 1];
             }
             (*count)--;
-            printf("Customer with account number %d deleted.\n", accountNumber);
+            printf("\tCustomer with account number %d deleted.\t\n", accountNumber);
             break;
         }
     }
     if (!found) {
-        printf("Customer with account number %d not found.\n", accountNumber);
+        printf("\tCustomer with account number %d not found.\t\n", accountNumber);
     }
 }
 
@@ -168,28 +180,27 @@ void editData(struct Customer customers[], int count, int accountNumber) {
     int found = 0;
     for (int i = 0; i < count; i++) {
         if (customers[i].accountNumber == accountNumber) {
-            printf("Enter new name: ");
+            printf("\tEnter new name: ");
             scanf("%s", customers[i].name);
-            printf("Enter new balance: ");
+            printf("\tEnter new balance: ");
             scanf("%f", &customers[i].balance);
-            printf("Enter new contact number: ");
+            printf("\tEnter new contact number: ");
             scanf("%s", customers[i].contactNumber);
-            printf("Enter new service region: ");
             scanf("%s", customers[i].serviceRegion);
             found = 1;
-            printf("Customer information updated successfully.\n");
+            printf("\tCustomer information updated successfully.\t\n");
             break;
         }
     }
     if (!found) {
-        printf("Customer with account number %d not found.\n", accountNumber);
+        printf("\tCustomer with account number %d not found.\t\n", accountNumber);
     }
 }
 
 void changePassword() {
     FILE *pass = fopen("pass.txt", "r+");
     if (pass == NULL) {
-        printf("Error opening file.\n");
+        printf("\tError opening file.\t\n");
         return;
     }
 
@@ -198,18 +209,18 @@ void changePassword() {
     decrypt(password, 5);
 
     char newPassword[100];
-    printf("Enter current password: ");
+    printf("\tEnter current password: ");
     scanf("%s", newPassword);
     if (strcmp(newPassword, password) != 0) {
-        printf("Incorrect password. Password change failed.\n");
+        printf("\tIncorrect password. Password change failed.\t\n");
         fclose(pass);
         return;
     }
 
     char newPasswordConfirm[100];
-    printf("Enter new password: ");
+    printf("\tEnter new password: ");
     scanf("%s", newPassword);
-    printf("Confirm new password: ");
+    printf("\tConfirm new password: ");
     scanf("%s", newPasswordConfirm);
 
     if (strcmp(newPassword, newPasswordConfirm) == 0) {
@@ -218,7 +229,7 @@ void changePassword() {
         fprintf(pass, "%s\n", newPassword);
         printf("Password changed successfully.\n");
     } else {
-        printf("Password confirmation failed. Password change failed.\n");
+        printf("\tPassword confirmation failed. Password change failed.\t\n");
     }
 
     fclose(pass);
@@ -241,35 +252,35 @@ void transferMoney(struct Customer customers[], int count, int senderAccountNumb
     }
 
     if (senderIndex == -1) {
-        printf("Sender with account number %d not found.\n", senderAccountNumber);
+        printf("\tSender with account number %d not found.\t\n", senderAccountNumber);
         return;
     }
 
     if (receiverIndex == -1) {
-        printf("Receiver with account number %d not found.\n", receiverAccountNumber);
+        printf("\tReceiver with account number %d not found.\t\n", receiverAccountNumber);
         return;
     }
 
     char pin[3];
-    printf("Enter your PIN: ");
+    printf("\tEnter your PIN: ");
     scanf("%s", pin);
 
     if (strcmp(customers[senderIndex].pin, pin) != 0) {
-        printf("Incorrect PIN. Transfer failed.\n");
+        printf("\tIncorrect PIN. Transfer failed.\t\n");
         return;
     }
 
     float amount;
-    printf("Enter the amount to transfer: ");
+    printf("\tEnter the amount to transfer: ");
     scanf("%f", &amount);
 
     if (amount <= 0) {
-        printf("Invalid amount. Transfer failed.\n");
+        printf("\tInvalid amount. Transfer failed.\t\n");
         return;
     }
 
     if (customers[senderIndex].balance < amount) {
-        printf("Insufficient balance. Transfer failed.\n");
+        printf("\tInsufficient balance. Transfer failed.\t\n");
         return;
     }
 
@@ -292,7 +303,7 @@ void transferMoney(struct Customer customers[], int count, int senderAccountNumb
 void generateSortedTextFile(struct Customer customers[], int count, const char *filename) {
     FILE *file = fopen(filename, "w");
     if (file == NULL) {
-        printf("Error opening file.\n");
+        printf("\tError opening file.\t\n");
         return;
     }
 
@@ -303,16 +314,30 @@ void generateSortedTextFile(struct Customer customers[], int count, const char *
     }
 
     fclose(file);
-    printf("Text file generated successfully.\nPlease handle it carefully. It contains Sensitive data\n");
+    printf("\tText file generated successfully.\nPlease handle it carefully. It contains Sensitive data\t\n");
 }
 
 void generateListByServiceRegion(struct Customer customers[], int count, const char *serviceRegion) {
-    FILE *file = fopen("listByServiceRegion.txt", "w");
-    if (file == NULL) {
-        printf("Error opening file.\n");
+    printf("For region: %s\n\n", serviceRegion);
+    printf("Name                AccountNumber  Balance      ContactNumber   ServiceRegion  \n\n");
+    for (int i = 0; i < count; i++) {
+        if (strcmp(customers[i].serviceRegion, serviceRegion) == 0) {
+            printf("%-19s %-14d %-12.2f %-15s %-14s\n", customers[i].name, customers[i].accountNumber, customers[i].balance, customers[i].contactNumber, customers[i].serviceRegion);
+        }
+    }
+    char generate[4] = "";
+    printf("Enter YES to generate file, anything else to skip file output:\n == ");
+    scanf("%s", generate);
+    if (strcmp(generate,"YES") != 0)
+    {
         return;
     }
-
+    FILE *file = fopen("listByServiceRegion.txt", "w");
+    if (file == NULL) {
+        printf("\tError opening file.\t\n");
+        return;
+    }
+    fprintf(file, "For region: %s\n\n", serviceRegion);
     fprintf(file, "Name                AccountNumber  Balance      ContactNumber   ServiceRegion  \n\n");
 
     for (int i = 0; i < count; i++) {
@@ -322,7 +347,7 @@ void generateListByServiceRegion(struct Customer customers[], int count, const c
     }
 
     fclose(file);
-    printf("Text file generated successfully.\nPlease handle it carefully. It contains Sensitive data\n");
+    printf("\tText file generated successfully.\nPlease handle it carefully. It contains Sensitive data\t\n");
 }
 
 void printAllAccounts(struct Customer customers[], int count) {
@@ -331,6 +356,15 @@ void printAllAccounts(struct Customer customers[], int count) {
     for (int i = 0; i < count; i++) {
         printf("%-19s %-14d %-12.2f %-15s %-14s\n", customers[i].name, customers[i].accountNumber, customers[i].balance,
                customers[i].contactNumber, customers[i].serviceRegion);
+    }
+}
+
+void addInterest(struct Customer customers[], int count) {
+    printf("Enter interest rate (in Percentage): ");
+    double rate;
+    scanf("%lf", &rate);
+    for (int i = 0; i < count; i++) {
+        customers[i].balance += customers[i].balance * (rate/100.0);
     }
 }
 
