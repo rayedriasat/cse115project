@@ -195,7 +195,7 @@ int main()
                 case 0:
                     clr();
                     pheader();
-                    printf("\n\t*****************Exiting the program******************\t\n");
+                    printf("\n\t=====================Exiting the program=====================\t\n");
                     printf("\n");
                     writeData(customers, count);
                     printf("\n\t===========================================\t\n");
@@ -211,8 +211,8 @@ int main()
             clr();
             pheader();
             readDataUser(customers, &count);
-            printf("\n\n\t*******************Banking Menu:*******************\t\n");
-            printf("Enter account number: ");
+            printf("\n\n\t************************Banking Menu:************************\t\n");
+            printf("\n\tEnter account number: ");
             int AccountNumber;
             scanf("%d", &AccountNumber);
             int accIndex = -1;
@@ -232,7 +232,7 @@ int main()
                 printf("Account number didn't match any existing accounts!!\n");
                 break;
             }
-            printf("Enter your pin: ");
+            printf("\tEnter your pin: ");
             char pin[5];
             scanf("%s", pin);
             if (strcmp(pin, customers[accIndex].pin) != 0)
@@ -246,8 +246,9 @@ int main()
                 pheader();
                 printf("\n\t\t1. Check Balance\n");
                 printf("\t\t2. Transfer Money\n");
-                printf("\t\t3. Withdraw Money\n");
-                printf("\t\t4. Change your pin\n");
+                printf("\t\t3. Add money\n");
+                printf("\t\t4. Withdraw Money\n");
+                printf("\t\t5. Change your pin\n");
                 printf("\t\t0. Exit\n");
                 printf("\n\tEnter your choice: ");
                 int choice2;
@@ -259,7 +260,7 @@ int main()
                 case 1:
                     clr();
                     pheader();
-                    printf("Your Balance is $%.2f\n", customers[accIndex].balance);
+                    printf("\n\tYour Balance is $%.2f\n", customers[accIndex].balance);
                     getch();
                     break;
                 case 2:
@@ -274,23 +275,40 @@ int main()
                 case 3:
                     clr();
                     pheader();
-                    float withdraw;
-                    printf("Enter amount to withdraw: ");
-                    scanf("%f", &withdraw);
-                    printf("Enter pin: ");
-                    scanf("%s", pin);
-                    if (strcmp(pin, customers[accIndex].pin) == 0)
-                    {
-                        customers[accIndex].balance -= withdraw;
-                        printf("Withdrawal Successful!\n\nYour new balance is: $%.2f\n\n", customers[accIndex].balance);
-                    }
-                    else
-                    {
-                        printf("Wrong pin!! Withdrawal denied!!!\n\n");
-                    }
+                    float add;
+                    printf("\tEnter amount you wanna add: ");
+                    scanf("%f", &add);
+                    customers[accIndex].balance += add;
+                    printf("\n\tAdd Money Successful!\n\n\tYour new balance is: $%.2f\n\n", customers[accIndex].balance);
                     getch();
                     break;
                 case 4:
+                    clr();
+                    pheader();
+                    float withdraw;
+                    printf("\tEnter amount to withdraw: ");
+                    scanf("%f", &withdraw);
+                    printf("\tEnter pin: ");
+                    scanf("%s", pin);
+                    if (strcmp(pin, customers[accIndex].pin) == 0)
+                    {
+                        if (customers[accIndex].balance >= withdraw) // check if the account has enough balance for withdrawal
+                        {
+                            customers[accIndex].balance -= withdraw;
+                            printf("\n\tWithdrawal Successful!\n\nYour new balance is: $%.2f\n\n", customers[accIndex].balance);
+                        }
+                        else
+                        {
+                            printf("\n\tNot enough balance!\n\n\tBalance: %.2f\n", customers[accIndex].balance);
+                        }
+                    }
+                    else
+                    {
+                        printf("\n\tWrong pin!! Withdrawal denied!!!\n\n");
+                    }
+                    getch();
+                    break;
+                case 5:
                     clr();
                     pheader();
                     printf("Enter current pin: ");
@@ -299,7 +317,7 @@ int main()
                     {
                         printf("Enter new pin: ");
                         scanf("%s", customers[accIndex].pin);
-                        printf("\n\nPin changed successfully!\n\n");
+                        printf("\n\n\tPin changed successfully!\n\n");
                     }
                     else
                     {
@@ -310,7 +328,7 @@ int main()
                 case 0:
                     clr();
                     pheader();
-                    printf("\n\t========================Exiting the program========================\t\n");
+                    printf("\n\t=====================Exiting the program=====================\t\n");
                     printf("\n");
                     writeData(customers, count);
                     printf("\t=============================================================\t\n");

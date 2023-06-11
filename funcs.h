@@ -96,7 +96,7 @@ int readDataUser(struct Customer customers[], int *count)
     }
 
     fclose(file);
-    printf("\t=====================Data read from file successfully====================\n");
+    printf("\t=============Data read from file successfully================\n");
     return 0;
 }
 
