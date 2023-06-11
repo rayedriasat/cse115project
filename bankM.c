@@ -1,12 +1,14 @@
+// All the useful functions are added in a separate header file funcs.h
+// for better code management
 #include "funcs.h"
 
 int main()
 {
-    struct Customer customers[MAX_CUSTOMERS];
-    int count = 0;
-    int readStat = 0;
+    struct Customer customers[MAX_CUSTOMERS]; // declaring a struct variable to operate on the data
+    int count = 0; // initially before reading from file, setting count to 0
+    int readStat = 0; // for tracking if the file was read successfully or not
 
-    pheader();
+    pheader(); // for style purpose, this function is called in many lines, avoiding repeating same code again and again
     while (1)
     {
         int option;
@@ -16,6 +18,7 @@ int main()
         scanf("%d", &option);
         if (option == 2)
         {
+            // ADMIN mode
             printf("\n");
             readStat = readData(customers, &count);  // password check & reading all data from file
             if (readStat == 1)
@@ -24,8 +27,11 @@ int main()
             }
             while (1)
             {
+                // clear previous things on console and print a beautiful header
                 clr();
                 pheader();
+
+                // The menu options for admin mode
                 printf("\n");
                 printf("\n\t****************Bank Management System Menu:****************\t\n");
                 printf("\t\t1. Add Customer\n");
@@ -52,10 +58,15 @@ int main()
                     }
                     else
                     {
+                        // used fflush for avoiding issues with newline characters in input stream
                         fflush(stdin);
                         printf("\tEnter customer name: ");
+
+                        // used fgets to take name input
                         fgets(customers[count].name, 100, stdin);
+                        // replacing the newline character at the end with null character
                         customers[count].name[strlen(customers[count].name) - 1] = '\0';
+
                         printf("\tEnter contact number: ");
                         fflush(stdin);
                         scanf("%s", customers[count].contactNumber);
@@ -69,6 +80,14 @@ int main()
                         printf("\tSet a PIN: ");
                         scanf("%s", customers[count].pin);
                         fflush(stdin);
+
+                        /*
+                        tracking last added Account number and incrementing that to
+                        generate an unique Account number for new customer.
+                        Couldn't rely on count variable for this, Cause we need to generate new
+                        AC no, if we delete a user, then the count variable becomes unusable
+                        for generating unique AC no.
+                        */
                         int maxACno = 1070000, i;
                         for (i = 0; i < count; i++)
                         {
@@ -82,7 +101,7 @@ int main()
 
                         printf("\tCustomer added successfully.\t\n");
                     }
-                    getch();
+                    getch(); // used getch() to hold the screen content before refreshing
                     break;
                 case 2:
                     clr();
@@ -195,12 +214,12 @@ int main()
                 case 0:
                     clr();
                     pheader();
-                    printf("\n\t=====================Exiting the program=====================\t\n");
+                    printf("\n\t=/===================Exiting the program===================/=\t\n");
                     printf("\n");
                     writeData(customers, count);
-                    printf("\n\t===========================================\t\n");
-                    printf("\tThank you for your time and have a good day!\t\n");
-                    printf("\t=============================================\t\n");
+                    printf("\n\n\n\n\n\n\n\n\t=+=========================================================+=\t\n");
+                    printf("\t\tThank you for your time and have a good day!\n");
+                    printf("\t=+=========================================================+=\t\n");
                     return 0;
                     break;
                 }
@@ -208,9 +227,10 @@ int main()
         }
         else if (option == 1)
         {
+            // USER mode
             clr();
             pheader();
-            readDataUser(customers, &count);
+            readDataUser(customers, &count); // only reading data, not asking for passwords
             printf("\n\n\t************************Banking Menu:************************\t\n");
             printf("\n\tEnter account number: ");
             int AccountNumber;
@@ -328,12 +348,12 @@ int main()
                 case 0:
                     clr();
                     pheader();
-                    printf("\n\t=====================Exiting the program=====================\t\n");
+                    printf("\n\t=/===================Exiting the program===================/=\t\n");
                     printf("\n");
-                    writeData(customers, count);
-                    printf("\t=============================================================\t\n");
-                    printf("\t         Thank you for your time and have a good day!\n");
-                    printf("\t=============================================================\t\n");
+                    writeData(customers, count); // Saving data before quitting
+                    printf("\n\n\n\n\n\n\n\n\t=+=========================================================+=\t\n");
+                    printf("\t\tThank you for your time and have a good day!\n");
+                    printf("\t=+=========================================================+=\t\n");
                     return 0;
                     break;
                 default:

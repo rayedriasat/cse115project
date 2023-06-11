@@ -1,9 +1,11 @@
+// used ifdef for making this same system work on both OS: windows & mac, linux
 #ifdef _WIN32
 #define clr() system("cls")
 #else
 #define clr() system("clear")
 #endif
 
+// some libraries used in the code
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,6 +15,7 @@
 
 void pheader()
 {
+    // HEADER content for console screen
     printf("\t=============================================================\t\n");
     printf("\t         Welcome to Bank of North South University\n");
     printf("\t=============================================================\t\n");
@@ -20,6 +23,7 @@ void pheader()
 
 struct Customer
 {
+    // to manage and manipulate the data, we used a custom data type
     char name[100];
     int accountNumber;
     float balance;
@@ -31,6 +35,8 @@ struct Customer
 
 void encrypt(char *str, int key)
 {
+    // basic encryption to make the data undetectable from normal eyes
+    // it will be called before writing data into the file
     for (int i = 0; i < strlen(str); i++)
     {
         str[i] = str[i] + key;
@@ -39,6 +45,8 @@ void encrypt(char *str, int key)
 
 void decrypt(char *str, int key)
 {
+    // to manage and manipulate data, when reading the file
+    // this function will decrypt the encrypted data from file
     for (int i = 0; i < strlen(str); i++)
     {
         str[i] = str[i] - key;
@@ -47,6 +55,7 @@ void decrypt(char *str, int key)
 
 int writeData(struct Customer customers[], int count)
 {
+    // to write or Save Data to file
     FILE *file = fopen("bankdata.txt", "w");
     if (file == NULL)
     {
@@ -56,9 +65,12 @@ int writeData(struct Customer customers[], int count)
 
     for (int i = 0; i < count; i++)
     {
+        // encrypt
         encrypt(customers[i].name, 5);
         encrypt(customers[i].pin, 7);
+        // write, used this format to make our program compatible with names having spaces in between them
         fprintf(file, "%s\n%d %.2f %s %s %s\n", customers[i].name, customers[i].accountNumber, customers[i].balance, customers[i].contactNumber,customers[i].serviceRegion, customers[i].pin);
+        // decrypt
         decrypt(customers[i].name, 5);
         decrypt(customers[i].pin, 7);
     }
@@ -71,6 +83,7 @@ int writeData(struct Customer customers[], int count)
 
 int readDataUser(struct Customer customers[], int *count)
 {
+    // reads data from the file, for USER MODE
     FILE *file = fopen("bankdata.txt", "r");
     if (file == NULL)
     {
@@ -82,17 +95,23 @@ int readDataUser(struct Customer customers[], int *count)
     {
         if (fgets(customers[*count].name, 100, file) == NULL)
         {
+            // check if the cursor is at the end of the file
             break;
         }
         customers[*count].name[strlen(customers[*count].name) - 1] = '\0'; // remove newline character
         fscanf(file, " %d %f %s %s %s", &customers[*count].accountNumber, &customers[*count].balance, customers[*count].contactNumber, customers[*count].serviceRegion, customers[*count].pin);
+
+        // decrypting data for the program
         decrypt(customers[*count].name, 5);
         decrypt(customers[*count].pin, 7);
+
+        // increasing the customers count
         (*count)++;
 
         // Consume remaining characters in the input buffer
         char buffer[10];
         fgets(buffer, 10, file);
+        // if wasn't consumed, fscanf reads 0,0,0.. blank data
     }
 
     fclose(file);
@@ -103,6 +122,7 @@ int readDataUser(struct Customer customers[], int *count)
 
 int readData(struct Customer customers[], int *count)
 {
+    // reads data from the file, for ADMIN MODE
     FILE *file = fopen("bankdata.txt", "r");
     FILE *pass = fopen("pass.txt", "r");
     if (file == NULL || pass == NULL)
@@ -119,6 +139,7 @@ int readData(struct Customer customers[], int *count)
     printf("Enter password: ");
     scanf("%s", input);
 
+    // check password
     if (strcmp(input, password) != 0)
     {
         printf("Incorrect password. Access denied.\n");
@@ -127,7 +148,7 @@ int readData(struct Customer customers[], int *count)
         exit(0);
     }
 
-    *count = 0;
+    *count = 0; // initially setting count to 0
     while (*count < MAX_CUSTOMERS)
     {
         if (fgets(customers[*count].name, 100, file) == NULL)
@@ -141,13 +162,18 @@ int readData(struct Customer customers[], int *count)
                customers[*count].contactNumber,
                customers[*count].serviceRegion,
                customers[*count].pin);
+
+        // decrypt data for the program
         decrypt(customers[*count].name, 5);
         decrypt(customers[*count].pin, 7);
+
+        // incrementing customers count
         (*count)++;
 
         // Consume remaining characters in the input buffer
         char buffer[10];
         fgets(buffer, 10, file);
+        // to avoid unnecessary bug like reading 0,0,0... blank data into customers array
     }
 
     fclose(file);
@@ -164,6 +190,7 @@ void sortDataAlphabetically(struct Customer customers[], int count)
         {
             if (strcmp(customers[j].name, customers[j + 1].name) > 0)
             {
+                // swapping if not in order
                 struct Customer temp = customers[j];
                 customers[j] = customers[j + 1];
                 customers[j + 1] = temp;
@@ -181,6 +208,7 @@ void sortDataByDeposit(struct Customer customers[], int count)
         {
             if (customers[j].balance < customers[j + 1].balance)
             {
+                // swapping if not in order
                 struct Customer temp = customers[j];
                 customers[j] = customers[j + 1];
                 customers[j + 1] = temp;
@@ -198,6 +226,7 @@ void sortDataByAccountNumber(struct Customer customers[], int count)
         {
             if (customers[j].accountNumber > customers[j + 1].accountNumber)
             {
+                // swapping if not in order
                 struct Customer temp = customers[j];
                 customers[j] = customers[j + 1];
                 customers[j + 1] = temp;
@@ -214,7 +243,7 @@ void searchData(struct Customer customers[], int count, int accountNumber)
     {
         if (customers[i].accountNumber == accountNumber)
         {
-            printf("\tCustomer found:\t\n");
+            printf("\n\tCustomer found:\t\n");
             printf("\tName: %s\t\n", customers[i].name);
             printf("\tAccount Number: %d\t\n", customers[i].accountNumber);
             printf("\tBalance: %.2f\t\n", customers[i].balance);
@@ -240,9 +269,10 @@ void deleteData(struct Customer customers[], int *count, int accountNumber)
             found = 1;
             for (int j = i; j < *count - 1; j++)
             {
+                // shifting all the elements on the right to 1 unit left
                 customers[j] = customers[j + 1];
             }
-            (*count)--;
+            (*count)--; // decrementing the customers count, as we deleted one
             printf("\tCustomer with account number %d deleted.\t\n", accountNumber);
             break;
         }
@@ -255,6 +285,7 @@ void deleteData(struct Customer customers[], int *count, int accountNumber)
 
 void editData(struct Customer customers[], int count, int accountNumber)
 {
+    // edit data by account number
     int found = 0;
     for (int i = 0; i < count; i++)
     {
@@ -282,6 +313,7 @@ void editData(struct Customer customers[], int count, int accountNumber)
 
 void changePassword()
 {
+    // for changing the ADMIN password
     FILE *pass = fopen("pass.txt", "r+");
     if (pass == NULL)
     {
@@ -303,6 +335,7 @@ void changePassword()
         return;
     }
 
+    // added safety confirmation for making sure it wasn't by mistake
     char newPasswordConfirm[100];
     printf("\tEnter new password: ");
     scanf("%s", newPassword);
@@ -326,6 +359,7 @@ void changePassword()
 
 void transferMoney(struct Customer customers[], int count, int senderAccountNumber, int receiverAccountNumber)
 {
+    // intra-bank money transfer
     int senderIndex = -1;
     int receiverIndex = -1;
 
@@ -389,6 +423,7 @@ void transferMoney(struct Customer customers[], int count, int senderAccountNumb
 
     printf("Transfer successful.\n");
 
+    // file to store all transactions
     FILE *file = fopen("transactions.txt", "a");
     if (file == NULL)
     {
@@ -397,12 +432,12 @@ void transferMoney(struct Customer customers[], int count, int senderAccountNumb
     }
 
     fprintf(file, "Sender Account Number: %d, Receiver Account Number: %d, Amount: %.2f\n", senderAccountNumber, receiverAccountNumber, amount);
-
     fclose(file);
 }
 
 void generateSortedTextFile(struct Customer customers[], int count, const char *filename)
 {
+    // Generates a NON-Encrypted text file
     FILE *file = fopen(filename, "w");
     if (file == NULL)
     {
@@ -414,6 +449,7 @@ void generateSortedTextFile(struct Customer customers[], int count, const char *
 
     for (int i = 0; i < count; i++)
     {
+        // formatted the output like this way, to better align like columns & rows
         fprintf(file, "%-19s %-14d %-12.2f %-15s %-14s\n", customers[i].name, customers[i].accountNumber, customers[i].balance, customers[i].contactNumber, customers[i].serviceRegion);
     }
 
@@ -423,12 +459,14 @@ void generateSortedTextFile(struct Customer customers[], int count, const char *
 
 void generateListByServiceRegion(struct Customer customers[], int count, const char *serviceRegion)
 {
+    // makes a list of customers only from a certain region
     printf("For region: %s\n\n", serviceRegion);
     printf("Name                AccountNumber  Balance      ContactNumber   ServiceRegion  \n\n");
     for (int i = 0; i < count; i++)
     {
         if (strcmp(customers[i].serviceRegion, serviceRegion) == 0)
         {
+            // formatted the output like this way, to better align like columns & rows
             printf("%-19s %-14d %-12.2f %-15s %-14s\n", customers[i].name, customers[i].accountNumber, customers[i].balance, customers[i].contactNumber, customers[i].serviceRegion);
         }
     }
@@ -452,6 +490,7 @@ void generateListByServiceRegion(struct Customer customers[], int count, const c
     {
         if (strcmp(customers[i].serviceRegion, serviceRegion) == 0)
         {
+            // formatted the output like this way, to better align like columns & rows
             fprintf(file, "%-19s %-14d %-12.2f %-15s %-14s\n", customers[i].name, customers[i].accountNumber, customers[i].balance, customers[i].contactNumber, customers[i].serviceRegion);
         }
     }
@@ -466,6 +505,7 @@ void printAllAccounts(struct Customer customers[], int count)
     printf("Name                AccountNumber  Balance      ContactNumber   ServiceRegion  \n\n");
     for (int i = 0; i < count; i++)
     {
+        // formatted the output like this way, to better align like columns & rows
         printf("%-19s %-14d %-12.2f %-15s %-14s\n", customers[i].name, customers[i].accountNumber, customers[i].balance,
                customers[i].contactNumber, customers[i].serviceRegion);
     }
@@ -473,6 +513,7 @@ void printAllAccounts(struct Customer customers[], int count)
 
 void addInterest(struct Customer customers[], int count)
 {
+    // a simple interest giving function
     printf("Enter interest rate (in Percentage): ");
     double rate;
     scanf("%lf", &rate);
